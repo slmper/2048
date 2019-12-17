@@ -3,6 +3,7 @@
 from card import Card
 import random
 
+
 def start():
     cards = [[Card(0), Card(0), Card(0), Card(0)],
              [Card(0), Card(0), Card(0), Card(0)],
@@ -12,11 +13,13 @@ def start():
     base_card(cards)
     return cards
 
+
 def basenum():
     if random.randint(1, 10) == 10:
         return 4
     else:
         return 2
+
 
 def base_card(cards):
     x = random.randint(0, 3)
@@ -29,6 +32,7 @@ def base_card(cards):
             cards[x][y].value = basenum()
             return cards
 
+
 def print_cards(cards):
     for x in range(4):
         for y in range(4):
@@ -40,6 +44,7 @@ def print_cards(cards):
             if y == 3:
                 print("")
 
+
 def check(cards):
     for x in range(4):
         for y in range(4):
@@ -48,6 +53,7 @@ def check(cards):
                 return True
     print("游戏结束！")
     return False
+
 
 def up_option(cards):
     flag = False
@@ -77,6 +83,7 @@ def up_option(cards):
         print("该操作无法执行")
     return cards
 
+
 def down_option(cards):
     flag = False
     for y in range(4):
@@ -105,6 +112,7 @@ def down_option(cards):
         print("该操作无法执行")
     return cards
 
+
 def left_option(cards):
     flag = False
     for x in range(4):
@@ -132,6 +140,7 @@ def left_option(cards):
     else:
         print("该操作无法执行")
     return cards
+
 
 def right_option(cards):
     flag = False
