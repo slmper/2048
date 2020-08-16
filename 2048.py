@@ -1,29 +1,27 @@
-#!/usr/bin/env python 
-# -*- coding:utf-8 -*-.
-import funcs
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+import pygame
+from settings import Settings
+import game_function as gf
+from button import Button
+from game_stats import GameStats
 
 
-def main():
-    # 游戏开始, 随机生成两个基数
-    cards = funcs.start()
-    funcs.print_cards(cards)
+def run_ganme():
+    # 初始化pygame、设置和屏幕对象
+    pygame.init()
+    ai_settings = Settings()
+    screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
+    pygame.display.set_caption("2048")
+    stats = GameStats()
+    # 创建Play按钮
+    play_button = Button(screen, "Play")
+    cards = gf.start_game(screen, stats)
+    # 开始游戏主循环
+    while True:
+        gf.check_events(cards, stats, play_button)
+        if stats.game_active:
+            gf.check(cards, stats)
+        gf.update_screen(ai_settings, screen, cards, stats, play_button)
 
-    # w为上指令，s为下指令，a为左指令，d为右指令
-    while funcs.check(cards):
-        option = input()
-        if option == 'w':
-            funcs.up_option(cards)
-            funcs.print_cards(cards)
-        if option == 's':
-            funcs.down_option(cards)
-            funcs.print_cards(cards)
-        if option == 'a':
-            funcs.left_option(cards)
-            funcs.print_cards(cards)
-        if option == 'd':
-            funcs.right_option(cards)
-            funcs.print_cards(cards)
-
-
-if __name__ == '__main__':
-    main()
+run_ganme()
