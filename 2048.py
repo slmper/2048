@@ -5,6 +5,7 @@ from settings import Settings
 import game_function as gf
 from button import Button
 from game_stats import GameStats
+from scoreboard import Scoreboard
 
 
 def run_ganme():
@@ -14,6 +15,7 @@ def run_ganme():
     screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
     pygame.display.set_caption("2048")
     stats = GameStats()
+    sb = Scoreboard(ai_settings, screen, stats)
     # 创建Play按钮
     play_button = Button(screen, "Play")
     cards = gf.start_game(screen, stats)
@@ -22,6 +24,7 @@ def run_ganme():
         gf.check_events(cards, stats, play_button)
         if stats.game_active:
             gf.check(cards, stats)
-        gf.update_screen(ai_settings, screen, cards, stats, play_button)
+            gf.check_score(cards, stats, sb)
+        gf.update_screen(ai_settings, screen, cards, stats, sb, play_button)
 
 run_ganme()

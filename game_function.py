@@ -3,6 +3,7 @@
 import sys
 import pygame
 import random
+import datetime
 from card import Card
 
 
@@ -33,12 +34,24 @@ def check_play_button(stats, play_button, mouse_x, mouse_y):
 
 
 def check(cards, stats):
+    """检查游戏是否结束"""
     for x in range(4):
         for y in range(4):
             if cards[x][y].value == 0 or\
                     (y < 3 and (cards[x][y].value == cards[x][y+1].value or cards[y][x].value == cards[y+1][x].value)):
                 stats.game_active = True
                 return None
+    """游戏结束，若超过最高分，则记录"""
+    if stats.game_active:
+        cursor = stats.db.cursor()
+        cursor.execute("""update high_scores set max_score='F' where max_score='T'""")
+        stats.db.commit()
+        now_time = datetime.datetime.now()
+        sql = """INSERT INTO HIGH_SCORES(HIGH_SCORE,TIME, MAX_SCORE)
+                    VALUES ('%d', "%s", 'T')""" % (stats.high_score, now_time)
+        cursor.execute(sql)
+        stats.db.commit()
+    stats.db.close()
     stats.game_active = False
 
 
@@ -146,18 +159,32 @@ def event_right(cards):
         base_card(cards)
 
 
-def update_screen(ai_settings, screen, cards, stats, play_button):
+def update_screen(ai_settings, screen, cards, stats, sb, play_button):
     """更新屏幕上的图片，并切换到新屏幕"""
     # 每次循环时都重绘屏幕
     screen.fill(ai_settings.bg_color)
     # 绘制背景板
     pygame.draw.rect(screen, ai_settings.bgp_color, ai_settings.bgp_place, 0)
     draw_cards(cards)
+    sb.show_score()
     # 如果游戏处于非活动状态，就绘制Play按钮
     if not stats.game_active:
         play_button.draw_button()
     # 让最近绘制的屏幕可见
     pygame.display.flip()
+
+
+def check_score(cards, stats, sb):
+    sum_score = 0
+    for x in range(4):
+        for y in range(4):
+            sum_score += int(cards[x][y].value)
+    stats.score = sum_score
+    sb.prep_score()
+    if stats.score > stats.high_score:
+        stats.high_score = stats.score
+        stats.high_score_true = True
+        sb.prep_high_score()
 
 
 def draw_cards(cards):
